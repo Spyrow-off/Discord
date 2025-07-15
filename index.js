@@ -1,37 +1,25 @@
-const { Client, GatewayIntentBits, REST, Routes, SlashCommandBuilder } = require('discord.js');
-require('dotenv').config();
+const { Client, GatewayIntentBits } = require("discord.js");
 
+// Crée un nouveau client Discord avec les bons intents
 const client = new Client({
-  intents: [GatewayIntentBits.Guilds]
+  intents: [
+    GatewayIntentBits.Guilds,
+    GatewayIntentBits.GuildMessages,
+    GatewayIntentBits.MessageContent
+  ]
 });
 
-client.once('ready', () => {
-  console.log(`Connecté en tant que ${client.user.tag}`);
+// Quand le bot est prêt
+client.once("ready", () => {
+  console.log(`✅ Connecté en tant que ${client.user.tag}`);
 });
 
-client.on('interactionCreate', async interaction => {
-  if (!interaction.isChatInputCommand()) return;
-  if (interaction.commandName === 'ping') {
-    await interaction.reply('pong!');
+// Répond à un message "!ping"
+client.on("messageCreate", (message) => {
+  if (message.content === "!ping") {
+    message.reply("🏓 Pong !");
   }
 });
 
-const commands = [
-  new SlashCommandBuilder().setName('ping').setDescription('Répond pong!')
-].map(cmd => cmd.toJSON());
-
-const rest = new REST({ version: '10' }).setToken(process.env.TOKEN);
-const CLIENT_ID = '1386118904232935545'; // remplace par l'ID de ton bo
-
-(async () => {
-  try {
-    console.log('Déploiement des commandes slash...');
-    await rest.put(Routes.applicationCommands(CLIENT_ID), { body: commands });
-    console.log('Commandes déployées avec succès.');
-  } catch (error) {
-    console.error(error);
-  }
-})();
-
+// Connexion au bot avec la variable d’environnement TOKEN
 client.login(process.env.TOKEN);
-// premier 
